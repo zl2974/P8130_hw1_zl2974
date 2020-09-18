@@ -1,0 +1,106 @@
+---
+title: "HW1"
+author: "Jeffrey Liang, zl2974"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r library_loading,  message=FALSE, echo = FALSE}
+library(tidyverse)
+sur_df = read_csv(paste(here::here(),"/Data/Antibodies.csv",sep='/'),col_types = "ifdff")%>%
+  mutate(Age_Category = factor(AgeCategory,levels = c("18-30","31-50","51+")))%>%
+  select(-AgeCategory)%>%
+  janitor::clean_names()
+my_controls <- arsenal::tableby.control(
+               total = F,
+               test=F,  # No test p-values yet
+               numeric.stats = c("meansd", "medianq1q3", "range", "Nmiss2"),
+               cat.stats = c("countpct", "Nmiss2"),
+               stats.labels = list(
+               meansd = "Mean (SD)",
+               medianq1q3 = "Median (Q1, Q3)",
+               range = "Min - Max",
+               Nmiss2 = "Missing",
+               countpct = "N (%)"))
+```
+
+*Code available at https://github.com/zl2974/P8130_hw1_zl2974/*
+
+# Problem 1
+
+## Descriptive statistics to the data
+
+```{r Descriptive, echo = FALSE}
+skimr::skim(sur_df)
+summary(arsenal::tableby(~age_category+smell+gender, sur_df,control = my_controls),text = TRUE,
+        title = "Catagorical Variable Statistics")
+```
+
+## Distribution of IgM
+
+One can first notice from descriptive statistics above that antibody IgM's level is extrme left skewed. To detail, Both histograms of antibody level and the logerithm of antibody level were provided. As shown below, even adjusted skewness with logerithm.
+
+```{r igm_histogram, message=FALSE,warning=FALSE,echo =FALSE}
+plt_1 = sur_df %>% 
+  select(antibody_ig_m,smell) %>% 
+  filter(smell == c('Normal',"Altered")) %>% 
+  mutate(log_igm = log(antibody_ig_m)) %>% 
+  ggplot(aes_string(x = 'antibody_ig_m'))+
+  geom_histogram(fill = 'pink',alpha = 0.6)+
+  labs(
+    x = "Antibody IgM"
+  )+ ggtitle("Antibody IgM level") + theme(plot.title = element_text(hjust = 0.5))
+plt_2 = sur_df %>% 
+  select(antibody_ig_m,smell) %>% 
+  filter(smell == c('Normal',"Altered")) %>% 
+  mutate(log_igm = log(antibody_ig_m)) %>% 
+  ggplot(aes_string(x = 'log_igm'))+
+  geom_histogram(fill = 'pink',alpha = 0.6)+
+    labs(
+    x = "log(Antibody IgM)"
+  )+ ggtitle("Logerithm Antibody IgM level") + theme(plot.title = element_text(hjust = 0.5))
+gridExtra::grid.arrange(plt_1,plt_2,nrow = 1) 
+```
+
+## Smell Alter and Normal comparison
+
+```{r smell_table, message= FALSE, echo = FALSE}
+summary(
+  arsenal::tableby(
+    smell ~ antibody_ig_m + gender+ age_category,
+    data = filter(sur_df,smell != c('Unanswered/Others'),
+                  !is.na(antibody_ig_m)),
+    control = arsenal::tableby.control(
+               total = F,
+               test=F,  # No test p-values yet
+               numeric.stats = c("meansd", "medianq1q3", "range"),
+               cat.stats = c("countpct"),
+               stats.labels = list(
+               meansd = "Mean (SD)",
+               medianq1q3 = "Median (Q1, Q3)",
+               range = "Min - Max",
+               countpct = "N (%)"))
+  ),title = "Smell", text  =TRUE
+)
+filter(sur_df,smell != c('Unanswered/Others'),!is.na(antibody_ig_m)) %>% 
+  mutate(log_igm = log(antibody_ig_m)) %>% 
+  group_by(smell) %>% 
+  mutate(grp.mean = mean(log_igm)) %>% 
+  ungroup() %>% 
+  ggplot(aes_string(x = 'log_igm',fill = 'smell',group='smell'))+
+  geom_vline(aes(xintercept = grp.mean,color = smell),linetype="dashed")+
+  geom_histogram(position = "dodge",alpha = 0.6)+
+    labs(
+    x = "log(Antibody IgM)"
+  )+ 
+  ggtitle("Logerithm Antibody IgM level Compared by Smell") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Grouped subjects with altered smell and normal, we have seen that subjects from group smell altered have higher antibody level compared with normal group.
+
+
