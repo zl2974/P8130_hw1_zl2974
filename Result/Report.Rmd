@@ -1,9 +1,9 @@
 ---
 title: "HW1"
 author: "Jeffrey Liang, zl2974"
-output: 
-  pdf_document:
-    latex_engine: xelatex
+output: html_document
+  #pdf_document:
+  #  latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ```{r library_loading,  message=FALSE, echo = FALSE}
 library(tidyverse)
-sur_df = read_csv(paste(here::here(),"/Data/Antibodies.csv",sep='/'),col_types = "ifdff")%>%
+smell_df = read_csv(paste(here::here(),"/Data/Antibodies.csv",sep='/'),col_types = "ifdff")%>%
   mutate(Age_Category = factor(AgeCategory,levels = c("18-30","31-50","51+")))%>%
   select(-AgeCategory)%>%
   janitor::clean_names()
@@ -34,18 +34,20 @@ my_controls <- arsenal::tableby.control(
 
 ## Descriptive statistics to the data
 
+ The data is a `r nrow(smell_df)` $\cdot$ `r ncol(smell_df)` shape data with `r count(smell_df)` objects. There're `r sum(is.na(smell_df))` missing values in the data. Descriptive statistics of the dataset was provided below, `r sum(is.na(pull(smell_df,'antibody_ig_m')))` value missing occurred at Antibody level's columns. Also provided with catagorical data's count table, no missing value in catagorcial data.
+
 ```{r Descriptive, echo = FALSE}
-skimr::skim(sur_df)
-summary(arsenal::tableby(~age_category+smell+gender, sur_df,control = my_controls),text = TRUE,
+skimr::skim_without_charts(smell_df)
+summary(arsenal::tableby(~age_category+smell+gender, smell_df,control = my_controls),text = TRUE,
         title = "Catagorical Variable Statistics")
 ```
 
 ## Distribution of IgM
 
-One can first notice from descriptive statistics above that antibody IgM's level is extrme left skewed. To detail, Both histograms of antibody level and the logerithm of antibody level were provided. As shown below, even adjusted skewness with logerithm.
+ One can first notice from descriptive statistics above that antibody IgM's level is extreme left skewed. To detail, Both histograms of antibody level and the logerithm of antibody level were provided. As shown below, even adjusted skewness with logerithm, antibody's level is highly concentrate on the left, and long tail on the right.
 
 ```{r igm_histogram, message=FALSE,warning=FALSE,echo =FALSE}
-plt_1 = sur_df %>% 
+plt_1 = smell_df %>% 
   select(antibody_ig_m,smell) %>% 
   filter(smell == c('Normal',"Altered")) %>% 
   mutate(log_igm = log(antibody_ig_m)) %>% 
@@ -54,7 +56,7 @@ plt_1 = sur_df %>%
   labs(
     x = "Antibody IgM"
   )+ ggtitle("Antibody IgM level") + theme(plot.title = element_text(hjust = 0.5))
-plt_2 = sur_df %>% 
+plt_2 = smell_df %>% 
   select(antibody_ig_m,smell) %>% 
   filter(smell == c('Normal',"Altered")) %>% 
   mutate(log_igm = log(antibody_ig_m)) %>% 
@@ -66,13 +68,15 @@ plt_2 = sur_df %>%
 gridExtra::grid.arrange(plt_1,plt_2,nrow = 1) 
 ```
 
-## Smell Alter and Normal comparison
+## Smell _Alter_ and _Normal_ Comparison
+
+ Grouped subjects with altered smell and normal, we have seen that subjects from group smell altered have higher antibody level compared with normal group. Also, spread of Altered group's antibody level is wider than the spread of normal smell group judging from both range and standard deviation.
 
 ```{r smell_table, message= FALSE, echo = FALSE}
 summary(
   arsenal::tableby(
     smell ~ antibody_ig_m + gender+ age_category,
-    data = filter(sur_df,smell != c('Unanswered/Others'),
+    data = filter(smell_df,smell != c('Unanswered/Others'),
                   !is.na(antibody_ig_m)),
     control = arsenal::tableby.control(
                total = F,
@@ -86,7 +90,7 @@ summary(
                countpct = "N (%)"))
   ),title = "Smell", text  =TRUE
 )
-filter(sur_df,smell != c('Unanswered/Others'),!is.na(antibody_ig_m)) %>% 
+filter(smell_df,smell != c('Unanswered/Others'),!is.na(antibody_ig_m)) %>% 
   mutate(log_igm = log(antibody_ig_m)) %>% 
   group_by(smell) %>% 
   mutate(grp.mean = mean(log_igm)) %>% 
@@ -101,6 +105,40 @@ filter(sur_df,smell != c('Unanswered/Others'),!is.na(antibody_ig_m)) %>%
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-Grouped subjects with altered smell and normal, we have seen that subjects from group smell altered have higher antibody level compared with normal group.
+\newpage
+# Problem 2
 
+*I've chosen* __*More Testing Needed: Most Coronavirus Cases Come From People Unaware They’re Infected*__ *as my interest for problem 2's article.*
+
+In the news of choice^1^, the author introduced result from the article from Li,R et.al^2^. The author introduce the result of the paper via transcript and direct quotes for her article. For example, the article quoted _“Our findings also indicate that a radical increase in the identification and isolation of currently undocumented infections would be needed to fully control SARS-CoV2,”_ directly to support her claim of _'Without enough testing to rapidly identify everyone who has the disease and separate them from others, the disease will continue to spread quickly.'_
+
+In other news reports, Columbia's news use directed quotes to the paper^3^. In ScienceDaily, the report first summary the paper and following use transcript as well as quotes to introduce the contents of the paper.
+
+There's a few relative news reports also referring to the same published article. 
+
+And here's **some** claims made in the article based on the Li,R's findings and are listed as followed:
+
+* The ability of a respiratory disease to become a pandemic depends in part on how many infectious people are not aware that they’re infectious
+* That means if someone were able to completely isolate themselves immediately after they were exposed to the virus, it would tremendously cut down the total infection rate. Each person would only infect about one other person.
+* Without enough testing to rapidly identify everyone who has the disease and separate them from others, the disease will continue to spread quickly.
+
+The ScienceDaily report agree on bullet point 1 and 3, regarding asymtompmatic and COVID-19 becoming a pandemic.
+
+To validate these points in the report, we must first dig into the reference paper and make comparison on the claims in report and in the paper.
+
+## Summary
+* Goal
+* study type
+* sample size and method
+* method
+* result
+
+Li, R's paper tried to calculate the proportion of undocumented COVID-19 cases and their transmission. To unravel characteristic of undocumented COVID-19, the author conducted an observational study through 
+
+
+## Reference
+1. News Article: *https://www.forbes.com/sites/tarahaelle/2020/03/20/more-testing-needed-most-coronavirus-cases-come-from-people-unaware-theyre-infected/#3ccf8ddc2988*
+1. News' reference: *https://science.sciencemag.org/content/sci/368/6490/489.full.pdf*
+1. Columbia: *https://www.publichealth.columbia.edu/public-health-now/news/stealth-transmission-fuels-fast-spread-coronavirus-outbreak*
+1. Science Daily: *https://www.sciencedaily.com/releases/2020/03/200316141454.htm*
 
