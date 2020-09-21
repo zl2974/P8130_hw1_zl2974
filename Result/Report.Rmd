@@ -1,9 +1,9 @@
 ---
 title: "HW1"
 author: "Jeffrey Liang, zl2974"
-output: html_document
-  #pdf_document:
-  #  latex_engine: xelatex
+output: 
+  pdf_document:
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
@@ -26,6 +26,8 @@ my_controls <- arsenal::tableby.control(
                range = "Min - Max",
                Nmiss2 = "Missing",
                countpct = "N (%)"))
+clean_smell = smell_df %>%
+  filter(smell != 'Unanswered/Others',!is.na(antibody_ig_m))
 ```
 
 *Code available at https://github.com/zl2974/P8130_hw1_zl2974/*
@@ -34,7 +36,7 @@ my_controls <- arsenal::tableby.control(
 
 ## Descriptive statistics to the data
 
- The data is a `r nrow(smell_df)` $\cdot$ `r ncol(smell_df)` shape data with `r count(smell_df)` objects. There're `r sum(is.na(smell_df))` missing values in the data. Descriptive statistics of the dataset was provided below, `r sum(is.na(pull(smell_df,'antibody_ig_m')))` value missing occurred at Antibody level's columns. Also provided with catagorical data's count table, no missing value in catagorcial data.
+ The data is a `r nrow(smell_df)` $\cdot$ `r ncol(smell_df)` shape data with `r count(smell_df)` objects. There're `r sum(is.na(smell_df))` missing values in the data. After cleaning missing values as well as the 'Unansered/Others' report from _Smell_ variable, `r count(clean_smell)` objects remain. Descriptive statistics of the original dataset was provided below, `r sum(is.na(pull(smell_df,'antibody_ig_m')))` value missing occurred at Antibody level's columns. Also provided with catagorical data's count table, no missing value in catagorcial data.
 
 ```{r Descriptive, echo = FALSE}
 skimr::skim_without_charts(smell_df)
@@ -121,24 +123,32 @@ And here's **some** claims made in the article based on the Li,R's findings and 
 * The ability of a respiratory disease to become a pandemic depends in part on how many infectious people are not aware that they’re infectious
 * That means if someone were able to completely isolate themselves immediately after they were exposed to the virus, it would tremendously cut down the total infection rate. Each person would only infect about one other person.
 * Without enough testing to rapidly identify everyone who has the disease and separate them from others, the disease will continue to spread quickly.
+* COVID-19 will be like H1N1 becoming a global endemic
 
-The ScienceDaily report agree on bullet point 1 and 3, regarding asymtompmatic and COVID-19 becoming a pandemic.
+The ScienceDaily report agree on bullet point 1 and 3, regarding asymtomatic and COVID-19 becoming a pandemic.
 
 To validate these points in the report, we must first dig into the reference paper and make comparison on the claims in report and in the paper.
 
-## Summary
-* Goal
-* study type
-* sample size and method
-* method
-* result
+## _Substantial undocumented infection facilitates the rapid dissemination of novel coronavirus (SARS-CoV-2)_
 
-Li, R's paper tried to calculate the proportion of undocumented COVID-19 cases and their transmission. To unravel characteristic of undocumented COVID-19, the author conducted an observational study with reported infection case and mobility data from tech company and applied bayesian inference model to interpret proportion of undocumented cases during 25 days before 10th, Jan. and 15 day after.
+
+Li, R's paper tried to calculate the proportion of undocumented COVID-19 cases and their transmission. To unravel characteristic of undocumented COVID-19, the author conducted an observational study with reported infection case and 2.97 billion mobility data from tech company and applied bayesian inference model to interpret proportion of undocumented cases during 25 days before 10th, Jan. and 15 day after. And the paper found result:
+
+* Basic reproductive number R~0~ 2.38(CI:2.03-2.77) during 10-23 Januray and only 14% total infections were reported (in another word: 86% of undocumented infections);
+* These undocumented infections had halved transmission compared to reported cases;
+* After implement of control measures(social-distancing and etc.), transmission rate of documented cases, $\beta$, dropped to 0.52 (CI:0.42–0.72) to 0.35 (0.28–0.45) as well as the R~0~ (to 1.34(CI:1.10-1.67));
+* Proportion of undocumented cases has dropped to 35%.
+* fully identify undocumented disease is need to fully control COVID-19.
+* COVID-19 can become the 5^th^ global endemic
+
+## Summary
+
+Comparing the news and paper, one have to admit that the Forbe's news has done good job putting the facts from the paper. All claims can be found from the _Introduction_, _Result_ and _Conclusion_ from the paper. But minor drawback of the news report is the definition of asymptomatic patients is not matching the define of undocumented infections of Li's paper. Asymptomatic patients are include in the undocumented infections, which stating the asymptomatic shares the characteristics of undocumented infections would over-estimated it.
 
 
 ## Reference
-1. News Article: *https://www.forbes.com/sites/tarahaelle/2020/03/20/more-testing-needed-most-coronavirus-cases-come-from-people-unaware-theyre-infected/#3ccf8ddc2988*
-1. News' reference: *https://science.sciencemag.org/content/sci/368/6490/489.full.pdf*
-1. Columbia: *https://www.publichealth.columbia.edu/public-health-now/news/stealth-transmission-fuels-fast-spread-coronavirus-outbreak*
-1. Science Daily: *https://www.sciencedaily.com/releases/2020/03/200316141454.htm*
+1. *More Testing Needed: Most Coronavirus Cases Come From People Unaware They’re Infected: *https://www.forbes.com/sites/tarahaelle/2020/03/20/more-testing-needed-most-coronavirus-cases-come-from-people-unaware-theyre-infected/#3ccf8ddc2988
+1. *Substantial undocumented infection facilitates the rapid dissemination of novel coronavirus (SARS-CoV-2)*: https://science.sciencemag.org/content/sci/368/6490/489.full.pdf
+1. *'Stealth Transmission' Fuels Fast Spread of Coronavirus Outbreak: *https://www.publichealth.columbia.edu/public-health-now/news/stealth-transmission-fuels-fast-spread-coronavirus-outbreak
+1. *'Stealth transmission' fuels fast spread of coronavirus outbreak: *https://www.sciencedaily.com/releases/2020/03/200316141454.htm
 
