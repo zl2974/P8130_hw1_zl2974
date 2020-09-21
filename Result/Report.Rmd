@@ -133,7 +133,7 @@ To validate these points in the report, we must first dig into the reference pap
 * method
 * result
 
-Li, R's paper tried to calculate the proportion of undocumented COVID-19 cases and their transmission. To unravel characteristic of undocumented COVID-19, the author conducted an observational study through 
+Li, R's paper tried to calculate the proportion of undocumented COVID-19 cases and their transmission. To unravel characteristic of undocumented COVID-19, the author conducted an observational study with reported infection case and mobility data from tech company and applied bayesian inference model to interpret proportion of undocumented cases during 25 days before 10th, Jan. and 15 day after.
 
 
 ## Reference
