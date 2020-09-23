@@ -39,6 +39,8 @@ clean_smell = smell_df %>%
  The data is a `r nrow(smell_df)` $\cdot$ `r ncol(smell_df)` shape data with `r count(smell_df)` objects. There're `r sum(is.na(smell_df))` missing values in the data. After cleaning missing values as well as the 'Unansered/Others' report from _Smell_ variable, `r count(clean_smell)` objects remain. Descriptive statistics of the original dataset was provided below, `r sum(is.na(pull(smell_df,'antibody_ig_m')))` value missing occurred at Antibody level's columns. Also provided with catagorical data's count table, no missing value in catagorcial data.
 
 ```{r Descriptive, echo = FALSE}
+smell_df = filter(smell_df,smell != 'Unanswered/Others') %>% 
+  mutate(smell = factor(smell,levels = c("Normal","Altered")))
 skimr::skim_without_charts(smell_df)
 summary(arsenal::tableby(~age_category+smell+gender, smell_df,control = my_controls),text = TRUE,
         title = "Catagorical Variable Statistics")
