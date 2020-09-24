@@ -36,7 +36,7 @@ clean_smell = smell_df %>%
 
 ## Descriptive statistics to the data
 
- The data is a `r nrow(smell_df)` $\cdot$ `r ncol(smell_df)` shape data with `r count(smell_df)` objects. There're `r sum(is.na(smell_df))` missing values in the data. After cleaning missing values as well as the 'Unansered/Others' report from _Smell_ variable, `r count(clean_smell)` objects remain. Descriptive statistics of the original dataset was provided below, `r sum(is.na(pull(smell_df,'antibody_ig_m')))` value missing occurred at Antibody level's columns. Also provided with catagorical data's count table, no missing value in catagorcial data.
+ The data is a `r nrow(smell_df)` $\cdot$ `r ncol(smell_df)` shape data with `r count(smell_df)` objects. There're `r sum(is.na(smell_df))` missing values in the data. After cleaning  the 'Unansered/Others' report from _Smell_ variable, `r count(filter(smell_df,smell != 'Unanswered/Others'))` objects remain. Descriptive statistics of the original dataset was provided below, `r sum(is.na(pull(smell_df,'antibody_ig_m')))` value missing occurred at Antibody level's columns. Also provided with catagorical data's count table, no missing value in catagorcial data.
 
 ```{r Descriptive, echo = FALSE}
 smell_df = filter(smell_df,smell != 'Unanswered/Others') %>% 
@@ -48,7 +48,7 @@ summary(arsenal::tableby(~age_category+smell+gender, smell_df,control = my_contr
 
 ## Distribution of IgM
 
- One can first notice from descriptive statistics above that antibody IgM's level is extreme left skewed. To detail, Both histograms of antibody level and the logerithm of antibody level were provided. As shown below, even adjusted skewness with logerithm, antibody's level is highly concentrate on the left, and long tail on the right.
+ One can first notice from descriptive statistics above that antibody IgM's level is extreme left skewed. To detail the distribution, both histograms of antibody level and the logerithm of antibody level were provided. As shown below, even with adjusted skewness with logerithm, antibody's level is highly concentrate on the left, and long tail on the right.
 
 ```{r igm_histogram, message=FALSE,warning=FALSE,echo =FALSE}
 plt_1 = smell_df %>% 
