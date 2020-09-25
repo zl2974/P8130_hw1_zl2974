@@ -105,7 +105,18 @@ filter(smell_df,smell != c('Unanswered/Others'),!is.na(antibody_ig_m)) %>%
     labs(
     x = "log(Antibody IgM)"
   )+ 
-  ggtitle("Logerithm Antibody IgM level Compared by Smell") + 
+  ggtitle("Logerithm Antibody IgM level Compared by Smell Histogram") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Boxplot
+filter(smell_df,smell != c('Unanswered/Others'),!is.na(antibody_ig_m)) %>% 
+  mutate(log_igm = log(antibody_ig_m)) %>% 
+  group_by(smell) %>% 
+  mutate(grp.mean = mean(log_igm)) %>% 
+  ungroup() %>% 
+  ggplot(aes_string(x="smell",y = 'log_igm',fill = 'smell'))+
+  geom_boxplot()+
+  ggtitle("Logerithm Antibody IgM level Compared by Smell Boxplot")+
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
