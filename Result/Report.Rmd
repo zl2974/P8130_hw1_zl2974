@@ -81,11 +81,12 @@ summary(
   arsenal::tableby(
     smell ~ antibody_ig_m + gender+ age_category,
     data = filter(smell_df,smell != c('Unanswered/Others'),
-                  !is.na(antibody_ig_m)),
+                  !is.na(antibody_ig_m)) %>% 
+      relocate(age_category,gender,antibody_ig_m),
     control = arsenal::tableby.control(
                total = F,
                test=F,  # No test p-values yet
-               numeric.stats = c("meansd", "medianq1q3", "range"),
+               numeric.stats = c("meansd"),
                cat.stats = c("countpct"),
                stats.labels = list(
                meansd = "Mean (SD)",
@@ -94,6 +95,7 @@ summary(
                countpct = "N (%)"))
   ),title = "Smell", text  =TRUE
 )
+
 filter(smell_df,smell != c('Unanswered/Others'),!is.na(antibody_ig_m)) %>% 
   mutate(log_igm = log(antibody_ig_m)) %>% 
   group_by(smell) %>% 
