@@ -50,7 +50,7 @@ summary(arsenal::tableby(~age_category+smell+gender, smell_df,control = my_contr
 
  One can first notice from descriptive statistics above that antibody IgM's level is extreme left skewed. To detail the distribution, both histograms of antibody level and the logerithm of antibody level were provided. As shown below, even with adjusted skewness with logerithm, antibody's level is highly concentrate on the left, and long tail on the right.
 
-```{r igm_histogram, message=FALSE,warning=FALSE,echo =FALSE}
+```{r ,message=FALSE,warning=FALSE,echo =FALSE}
 plt_1 = smell_df %>% 
   select(antibody_ig_m,smell) %>% 
   filter(smell == c('Normal',"Altered")) %>% 
@@ -158,6 +158,8 @@ Li, R's paper tried to calculate the proportion of undocumented COVID-19 cases a
 * Proportion of undocumented cases has dropped to 35%.
 * fully identify undocumented disease is need to fully control COVID-19.
 * COVID-19 can become the 5^th^ global endemic
+
+The sample size of the data is huge, by central limit theorem, sample mean interpret via this dataset is solid. Although the data is not up-to-date, it is appropriated to estimate the human mobility with somewhat close-to-date one, given that the mobility in china takes place every year and methods of transportation haven't seen any significant change over the years. And the result generate from the data is also accordinated with other report regarding undocumented infections. The paper is crediable.
 
 ## Summary
 
