@@ -74,15 +74,14 @@ gridExtra::grid.arrange(plt_1,plt_2,nrow = 1)
 
 ## Smell _Alter_ and _Normal_ Comparison
 
- Grouped subjects with altered smell and normal, we have seen that subjects from group smell altered have higher antibody level compared with normal group. Also, spread of Altered group's antibody level is wider than the spread of normal smell group judging from both range and standard deviation.
+As we can observe in following table, both altered smell group and the normal group share similar age distribution, over 50% of the subjects are 31 to 50 years old, around 20% at 18-30 and the rest lies in over 51. Both groups have higher proportion in female subjects, but the altered group has 10% more female compared to the normal group. Also, higher IgM level is observed in the alter group, with wider standard distribution.
 
 ```{r smell_table, message= FALSE, echo = FALSE}
 summary(
   arsenal::tableby(
     smell ~ antibody_ig_m + gender+ age_category,
     data = filter(smell_df,smell != c('Unanswered/Others'),
-                  !is.na(antibody_ig_m)) %>% 
-      relocate(age_category,gender,antibody_ig_m),
+                  !is.na(antibody_ig_m)),
     control = arsenal::tableby.control(
                total = F,
                test=F,  # No test p-values yet
@@ -93,9 +92,13 @@ summary(
                medianq1q3 = "Median (Q1, Q3)",
                range = "Min - Max",
                countpct = "N (%)"))
-  ),title = "Smell", text  =TRUE
+  )[c("age_category","gender","antibody_ig_m")],title = "Smell", text  =TRUE
 )
+```
 
+ Grouped subjects with altered smell and normal, we have seen that subjects from group smell altered have higher antibody level compared with normal group. Also, spread of Altered group's antibody level is wider than the spread of normal smell group judging from both range and standard deviation.
+
+```{r plot , message= FALSE, echo = FALSE}
 filter(smell_df,smell != c('Unanswered/Others'),!is.na(antibody_ig_m)) %>% 
   mutate(log_igm = log(antibody_ig_m)) %>% 
   group_by(smell) %>% 
